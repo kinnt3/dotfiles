@@ -1,0 +1,331 @@
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
+
+[[plugins]]
+repo = 'Shougo/deol.nvim'
+depends = ['ddu.vim', 'ddc.vim']
+on_source = ['ddu.vim']
+hooks_file = '$BASE_DIR/deol.vim'
+
+[[plugins]]
+repo = 'Shougo/junkfile.vim'
+on_source = ['ddu.vim']
+hook_add = '''
+  let s:path = $CACHE .. '/junkfile'
+  if !(s:path->isdirectory())
+    call mkdir(s:path, 'p')
+  endif
+  nnoremap [ddu]j <Cmd>Ddu junkfile -source-option-junkfile-volatile<CR>
+'''
+
+[[plugins]]
+repo = 'Shougo/vinarise.vim'
+on_cmd = 'Vinarise'
+hook_add = '''
+  let g:vinarise_enable_auto_detect = v:true
+'''
+
+[[plugins]]
+repo = 'kana/vim-niceblock'
+on_map = { x = '<Plug>' }
+
+[[plugins]]
+repo = 'thinca/vim-qfreplace'
+on_ft = ['qf']
+[plugins.ftplugin]
+qf = '''
+  nnoremap <buffer> r <Cmd>Qfreplace<CR>
+'''
+
+[[plugins]]
+repo = 'itchyny/vim-qfedit'
+on_ft = ['qf']
+
+[[plugins]]
+repo = 'tyru/open-browser.vim'
+on_map = { nv = '<Plug>(openbrowser-' }
+hook_add = '''
+  let g:netrw_nogx = 1 " disable netrw's gx mapping.
+  nmap <Leader>x <Plug>(openbrowser-smart-search)
+  vmap <Leader>x <Plug>(openbrowser-smart-search)
+'''
+hook_source = '''
+  let g:openbrowser_use_vimproc = 0
+'''
+
+[[plugins]]
+repo = 'rhysd/vim-operator-surround'
+depends = 'vim-operator-user'
+on_map = { n = '<Plug>' }
+hook_add = '''
+  nmap <Leader>a <Plug>(operator-surround-append)
+  nmap <Leader>d <Plug>(operator-surround-delete)a
+  nmap <Leader>r <Plug>(operator-surround-replace)a
+  nmap <Leader>c <Plug>(operator-surround-replace)a
+'''
+
+[[plugins]]
+repo = 'kannokanno/previm'
+depends = 'open-browser.vim'
+on_cmd = 'PrevimOpen'
+
+[[plugins]]
+repo = 'osyo-manga/vim-jplus'
+on_map = { n = '<Plug>' }
+hook_add = '''
+  nmap J <Plug>(jplus)
+'''
+
+[[plugins]]
+repo = 'mattn/vim-goimports'
+on_ft = 'go'
+hook_source = '''
+  let g:goimports_simplify = v:true
+'''
+
+[[plugins]]
+repo = 'rhysd/vim-gfm-syntax'
+on_ft = 'markdown'
+
+[[plugins]]
+repo = 'lambdalisue/fern.vim'
+on_cmd = 'Fern'
+hook_add = '''
+  nnoremap <Leader>f <Cmd>Fern %:h<CR>
+'''
+hook_source = '''
+  let g:fern#default_hidden = 1
+  autocmd MyAutoCmd FileType fern call s:fern_my_settings()
+  function! s:fern_my_settings() abort
+    nmap <buffer> c <Plug>(fern-action-cd)
+  endfunction
+'''
+
+[[plugins]]
+repo = 'lambdalisue/nerdfont.vim'
+on_source = ['fern.vim']
+
+[[plugins]]
+repo = 'lambdalisue/fern-renderer-nerdfont.vim'
+on_source = ['fern.vim']
+hook_source = '''
+  let g:fern#renderer = 'nerdfont'
+'''
+
+[[plugins]]
+repo = 'lambdalisue/fern-bookmark.vim'
+on_source = ['fern.vim']
+hook_source = '''
+  autocmd MyAutoCmd FileType fern call glyph_palette#apply()
+  autocmd MyAutoCmd FileType nerdtree,startify call glyph_palette#apply()
+'''
+
+[[plugins]]
+repo = 'lambdalisue/glyph-palette.vim'
+on_source = ['fern.vim']
+hook_source = '''
+  autocmd MyAutoCmd FileType fern call glyph_palette#apply()
+  autocmd MyAutoCmd FileType nerdtree,startify call glyph_palette#apply()
+'''
+
+[[plugins]]
+repo = 'lambdalisue/gina.vim'
+on_cmd = 'Gina'
+hook_source = '''
+  call gina#custom#command#alias('branch', 'br')
+  call gina#custom#command#option('br', '-v', 'v')
+  call gina#custom#command#option(
+        \ '/\%(log\|reflog\)',
+        \ '--opener', 'vsplit'
+        \)
+  call gina#custom#command#option(
+        \ 'log', '--group', 'log-viewer'
+        \)
+  call gina#custom#command#option(
+        \ 'reflog', '--group', 'reflog-viewer'
+        \)
+  call gina#custom#command#option(
+        \ 'commit', '-v|--verbose'
+        \)
+  call gina#custom#command#option(
+        \ '/\%(status\|commit\)',
+        \ '-u|--untracked-files'
+        \)
+  call gina#custom#command#option(
+        \ '/\%(status\|changes\)',
+        \ '--ignore-submodules'
+        \)
+
+  call gina#custom#action#alias(
+        \ 'branch', 'track',
+        \ 'checkout:track'
+        \)
+  call gina#custom#action#alias(
+        \ 'branch', 'merge',
+        \ 'commit:merge'
+        \)
+  call gina#custom#action#alias(
+        \ 'branch', 'rebase',
+        \ 'commit:rebase'
+        \)
+
+  call gina#custom#mapping#nmap(
+        \ 'branch', 'g<CR>',
+        \ '<Plug>(gina-commit-checkout-track)'
+        \)
+  call gina#custom#mapping#nmap(
+        \ 'status', '<C-^>',
+        \ ':<C-u>Gina commit<CR>',
+        \ {'noremap': 1, 'silent': 1}
+        \)
+  call gina#custom#mapping#nmap(
+        \ 'commit', '<C-^>',
+        \ ':<C-u>Gina status<CR>',
+        \ {'noremap': 1, 'silent': 1}
+        \)
+
+  call gina#custom#execute(
+        \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+        \ 'setlocal winfixheight',
+        \)
+'''
+
+[[plugins]]
+repo = 'junegunn/vim-easy-align'
+on_map = { nvx = '<Plug>(EasyAlign)' }
+hook_add = '''
+  vmap <Enter> <Plug>(EasyAlign)
+  xmap <Leader>e <Plug>(EasyAlign)
+  nmap <Leader>e <Plug>(EasyAlign)
+'''
+
+[[plugins]]
+repo = 'kana/vim-altr'
+on_map = { n = '<Plug>' }
+hook_add = '''
+  nmap <Leader>n <Plug>(altr-forward)
+  nmap <Leader>p <Plug>(altr-back)
+'''
+hook_source = '''
+  call altr#reset()
+  call altr#define('%/src/**/%.cc', '%/include/**/%.h')
+'''
+
+[[plugins]]
+repo = 'voldikss/vim-translator'
+on_map = { nv = '<Plug>Translate' }
+hook_add = '''
+  " Echo translation in the cmdline
+  nmap <silent> <Leader>tc <Plug>Translate
+  vmap <silent> <Leader>tc <Plug>TranslateV
+  " Display translation in a window
+  nmap <silent> <Leader>tw <Plug>TranslateW
+  vmap <silent> <Leader>tw <Plug>TranslateWV
+  " Replace the text with translation
+  nmap <silent> <Leader>tr <Plug>TranslateR
+  vmap <silent> <Leader>tr <Plug>TranslateRV
+  " Translate the text in clipboard
+  nmap <silent> <Leader>ty <Plug>TranslateX
+'''
+hook_source = '''
+  " Text highlight of translator window
+  hi def link TranslatorQuery     Identifier
+  hi def link TranslatorPhonetic  Type
+  hi def link TranslatorExplain   Statement
+  hi def link TranslatorDelimiter Special
+  " Background of translator window border
+  hi def link TranslatorNF        NormalFloat
+  hi def link TranslatorBorderNF  NormalFloat
+
+  let g:translator_target_lang = 'ja'
+  let g:translator_window_max_width = 0.3425
+  let g:translator_window_max_height = 0.8
+'''
+
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+if = 'has("win32")'
+merged = 0
+on_event = ['BufRead', 'CursorHold']
+hook_post_update = 'TSUpdate'
+lua_source = '''
+  require'nvim-treesitter.configs'.setup {
+      ensure_installed = { 'vim', 'toml' },
+      auto_install = false,
+      highlight = {
+          enable = true,
+          disable = function(lang, buf)
+              if (lang == 'vimdoc' or lang == 'diff'
+                  or lang == 'gitcommit' or lang == 'swift') then
+                return true
+              end
+              local max_filesize = 50 * 1024 -- 50 KB
+              local ok, stats = pcall(vim.loop.fs_stat,
+                                      vim.api.nvim_buf_get_name(buf))
+              if ok and stats and stats.size > max_filesize then
+                  return true
+              end
+          end,
+          additional_vim_regex_highlighting = true,
+      },
+  }
+'''
+
+[[plugins]]
+repo = 'MunifTanjim/nui.nvim'
+
+[[plugins]]
+repo = 'folke/noice.nvim'
+depends = 'nui.nvim'
+lua_source = '''
+  require('noice').setup {
+    cmdline = {
+      enabled = true,
+      format = {
+        cmdline = { pattern = "^:", icon = ":", lang = "vim" },
+        search_down = { kind = "search", pattern = "^/", icon = "/", lang = "regex" },
+        search_up = { kind = "search", pattern = "^%?", icon = "?", lang = "regex" },
+        filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
+        lua = { pattern = "^:%s*lua%s+", icon = "", lang = "lua" },
+        help = { pattern = "^:%s*he?l?p?%s+", icon = "" },
+        input = {}, -- Used by input()
+        -- lua = false, -- to disable a format, set to `false`
+      },
+    },
+    popupmenu = {
+      enabled = false,
+    },
+    messages = {
+      enabled = true,
+    },
+    routes = {
+      {
+        view = "mini",
+        filter = {
+          event = { "msg_show", "msg_showmode" },
+          ["not"] = {
+            kind = { "confirm", "confirm_sub" },
+          },
+        },
+      },
+      {
+        filter = {
+          event = "cmdline",
+          find = "^%s*[/?]",
+        },
+        view = "cmdline",
+      },
+    },
+  }
+'''
+
+[[plugins]]
+repo = 'rcarriga/nvim-notify'
+on_lua = 'notify'
+lua_source = '''
+  require('notify').setup({
+    render = "minimal",
+    stages = "static",
+    timeout = 1000,
+  })
+'''

@@ -1,0 +1,138 @@
+hooks_file = '$BASE_DIR/deinft.vim'
+
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'hachy/eva01.vim'
+hook_add = '''
+  colorscheme eva01-LCL
+  hi ColorColumn guibg=#2c2d2f
+'''
+hook_done_update = '''
+  colorscheme eva01-LCL
+  hi ColorColumn guibg=#2c2d2f
+'''
+
+[[plugins]]
+repo = 'vim-jp/autofmt'
+hook_add = '''
+  set formatexpr=autofmt#japanese#formatexpr()
+'''
+
+[[plugins]]
+repo = 'kana/vim-operator-user'
+
+[[plugins]]
+repo = 'vim-jp/vimdoc-ja'
+
+[[plugins]]
+repo = 'vim-jp/syntax-vim-ex'
+
+[[plugins]]
+repo = 'cespare/vim-toml'
+
+[[plugins]]
+repo = 'Vimjas/vim-python-pep8-indent'
+
+[[plugins]]
+repo = 'rbtnn/vim-vimscript_indentexpr'
+
+[[plugins]]
+repo = 'itchyny/lightline.vim'
+hook_add = '''
+  if has('win32') || has('win64')
+    let s:offset = ' ' 
+  elseif has('mac')
+    let s:offset = ''
+  endif
+  let g:lightline = {
+        \ 'colorscheme': 'one',
+        \ 'active': {
+        \   'left': [['mode', 'paste'],
+        \            ['gitstatus', 'readonly', 'filename', 'modified']],
+        \   'right': [['syntastic', 'lineinfo'],
+        \             ['percent'], 
+        \             ['fileformat', 'fileencoding', 'filetype']]
+        \ },
+        \ 'component': {
+        \   'lineinfo': ' %3l:%-2v',
+        \ },
+        \ 'component_function': {
+        \   'readonly': 'LightlineReadonly',
+        \   'gitstatus': 'LightlineGitstatus',
+        \   'fileformat': 'LightlineFileformat',
+        \   'filetype': 'LightlineFiletype',
+        \   'fileencoding': 'LightlineFileencoding',
+        \ },
+        \ 'separator': { 'left': ''. s:offset, 'right': ''. s:offset },
+        \ 'subseparator': { 'left': '|', 'right': '|' },
+        \ 'tab': {
+        \   'active': [ 'tabnum', 'filename', 'fullpath', 'modified' ],
+        \   'inactive': [ 'tabnum', 'filename', 'modified' ] 
+        \ },
+        \ 'tab_component_function': {
+        \   'fullpath': 'LightlineFilename'
+        \ }
+        \ }
+  function! LightlineReadonly()
+    return &readonly ? ''. s:offset : ''
+  endfunction
+  function! LightlineGitstatus()
+    if exists('*gina#component#repo#branch')
+      let branch = gina#component#repo#branch()
+      return branch !=# '' ? ''. s:offset . branch : ''
+    endif
+    return ''
+  endfunction
+  function! LightlineFilename(tabcount)
+    let path = expand('%:p:h')
+    return path !=# '' ? '[' . path . ']' : ''
+  endfunction
+  function! LightlineFileformat()
+    let ff_table = {'dos' : 'CRLF', 'unix' : 'LF', 'mac' : 'CR' }
+    return winwidth(0) > 85 ? ff_table[&fileformat] : ''
+  endfunction
+  function! LightlineFiletype()
+    return winwidth(0) > 85 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+  endfunction
+  function! LightlineFileencoding()
+    return winwidth(0) > 85 ? (&fenc !=# '' ? &fenc : &enc) . (&bomb ? '[BOM]' : '') : ''
+  endfunction
+'''
+
+[[plugins]]
+repo = 'scrooloose/nerdcommenter'
+hook_add = '''
+  let g:NERDSpaceDelims=1
+  let g:NERDDefaultAlign='left'
+'''
+
+[[plugins]]
+repo = 'simeji/winresizer'
+hook_add = '''
+  let g:winresizer_start_key="\<Leader>w"
+'''
+
+[[plugins]]
+repo = 'thinca/vim-localrc'
+hook_add = '''
+  augroup MyAutoCmd BufEnter * nested call s:project_my_settings()
+
+  function! s:project_my_settings() abort
+    let git_dir = finddir('.git', expand('%:p:h') . ';')
+    if git_dir !=# ''
+      let project_path = fnamemodify(git_dir . '/../', ':p')
+      if isdirectory(project_path)
+        execute('lcd ' . project_path)
+        execute('setlocal path+=' . project_path . '/**')
+      endif
+    endif
+
+    let load_files = localrc#search(g:localrc_filename)
+    if !empty(load_files)
+      call localrc#load(g:localrc_filename)
+    endif
+  endfunction
+'''
+

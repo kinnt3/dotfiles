@@ -1,0 +1,37 @@
+if &compatible
+  set nocompatible
+endif
+
+augroup MyAutoCmd
+  autocmd!
+  " autocmd CmdlineEnter,RecordingEnter * set cmdheight=1
+  " autocmd CmdlineLeave,RecordingLeave * set cmdheight=0
+  autocmd TermOpen * setlocal modifiable
+  autocmd TextYankPost *
+        \ lua require'vim.highlight'.on_yank
+        \ { higroup='IncSearch', timeout=100 }
+augroup END
+
+" Show title.
+set title titlelen=95
+" Title string.
+let &g:titlestring = [
+      \   "%{expand('%:p:~:.')}",
+      \   "%<\(%{fnamemodify(getcwd(), ':~')}\)",
+      \   "%(%y%m%r%)",
+      \ ]->join()
+
+let g:loaded_node_provider = v:false
+let g:loaded_perl_provider = v:false
+let g:loaded_python3_provider = v:true
+let g:loaded_ruby_provider = v:false
+
+let g:python3_host_prog = has('win32') ? 'python.exe' : 'python3'
+
+execute 'source' fnamemodify(expand('<sfile>'), ':h').'/dein.vim'
+
+filetype plugin indent on
+syntax enable
+
+silent filetype detect
+
