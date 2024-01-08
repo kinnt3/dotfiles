@@ -12,8 +12,8 @@ nnoremap [ddu]gr             <Cmd>call StartDdu('rg_register')<CR>
 nnoremap [ddu]gl             <Cmd>call StartDdu('rg_live')<CR>
 nnoremap [ddu]pg             <Cmd>call StartDdu('rg_pm')<CR>
 nnoremap [ddu]w              <Cmd>call StartDdu('rg_cword')<CR>
-nnoremap [ddu]pw             <Cmd>call StartDdu('rg_cword_pmatch')<CR>
-nnoremap [ddu]dw             <Cmd>call StartDdu('rg_cword_cdir')<CR>
+nnoremap [ddu]pw             <Cmd>call StartDdu('rg_cword_pm')<CR>
+nnoremap [ddu]gd             <Cmd>call StartDdu('rg_cdir')<CR>
 nnoremap [ddu]h              <Cmd>call StartDdu('history')<CR>
 nnoremap [ddu]/              <Cmd>call StartDdu('line')<CR>
 nnoremap [ddu]*              <Cmd>call StartDdu('line_cword')<CR>
@@ -22,7 +22,7 @@ xnoremap [ddu]re             <Cmd>call StartDdu('register_visual')<CR>
 nnoremap [ddu]rg             <Cmd>call StartDdu('search_resume')<CR>
 nnoremap [ddu]r<Space>       <Cmd>call StartDdu('file_rec_resume')<CR>
 nnoremap [ddu]de             <Cmd>call StartDdu('dein')<CR>
-nnoremap <C-o>               <Cmd>call StartDdu('jumplist')<CR>
+nnoremap [ddu]j              <Cmd>call StartDdu('jumplist')<CR>
 
 function! StartDdu(name) abort
   let name = a:name
@@ -91,7 +91,7 @@ function! StartDdu(name) abort
   elseif name ==# 'rg_pm'
     let word = 'Pattern: '->input()
     if !empty(word)
-      let args = ddu#custom#get_global().rg.args + ['--word_regexp']
+      let args = ddu#custom#get_global().sourceParams.rg.args + ['--word-regexp']
       call ddu#start(#{ 
             \   name: 'search',
             \   sources: [
@@ -109,10 +109,10 @@ function! StartDdu(name) abort
             \   ],
             \ })
     endif
-  elseif name ==# 'rg_cword_pmatch'
+  elseif name ==# 'rg_cword_pm'
     let word = 'Pattern: '->input('<cword>'->expand())
     if !empty(word)
-      let args = ddu#custom#get_global().rg.args + ['--word_regexp']
+      let args = ddu#custom#get_global().sourceParams.rg.args + ['--word-regexp']
       call ddu#start(#{ 
             \   name: 'search',
             \   sources: [
@@ -120,15 +120,17 @@ function! StartDdu(name) abort
             \   ],
             \ })
     endif
-  elseif name ==# 'rg_cword_cdir'
+  elseif name ==# 'rg_cdir'
     let word = 'Pattern: '->input()
-    let dir = 'Directory: '->input($'{getcwd()}/', 'dir')
-    call ddu#start(#{ 
-          \   name: 'search',
-          \   sources: [
-          \     #{ name: 'rg', params: #{ input: expand('<cword>') }, options: #{ path: dir } },
-          \   ],
-          \ })
+    let dir = 'Directory: '->input(glob(getcwd()) . '/', 'dir')
+    if !empty(word) && !empty(dir)
+      call ddu#start(#{ 
+            \   name: 'search',
+            \   sources: [
+            \     #{ name: 'rg', params: #{ input: expand('<cword>') }, options: #{ path: dir } },
+            \   ],
+            \ })
+    endif
   elseif name ==# 'history'
     call ddu#start(#{
           \   name: 'history', 

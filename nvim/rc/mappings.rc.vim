@@ -128,17 +128,16 @@ function! s:VSetSearch()
   let @s = temp
 endfunction
 
+" Change the current directory
+" nnoremap <Leader>cd :cd %:h<CR>
+" nnoremap <Leader>lcd :lcd %:h<CR>
+
 " Open Filer
 if has('win32')
   nnoremap <silent> <F3> :<C-u>!start .<CR>
 elseif has('mac')
   nnoremap <silent> <F3> :<C-u>!open .<CR>
 endif
-
-" Change the current directory
-" nnoremap <Leader>cd :cd %:h<CR>
-" nnoremap <Leader>lcd :lcd %:h<CR>
-
 nnoremap <F4> <Cmd>call dein#recache_runtimepath()<CR>
 nnoremap <F5> <Cmd>call dein#update()<CR>
 

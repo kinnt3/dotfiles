@@ -32,7 +32,7 @@ call ddc#custom#patch_global(#{
       \   'InsertEnter', 'TextChangedI', 'TextChangedP', 
       \   'TextChangedT', 'CmdlineEnter', 'CmdlineChanged',
       \ ],
-      \ sources: ['around', 'buffer', 'file'],
+      \ sources: ['around', 'buffer', 'file', 'line'],
       \ cmdlineSources: {
       \   ':': ['cmdline', 'cmdline-history', 'around'],
       \   '@': ['input', 'cmdline-history', 'file', 'around'],
@@ -50,36 +50,47 @@ call ddc#custom#patch_global(#{
       \     converters: ['converter_remove_overlap'],
       \   },
       \   around: #{
-      \     mark: 'A',
+      \     mark: '[around]',
       \   },
       \   buffer: #{
-      \     mark: 'B',
+      \     mark: '[buffer]',
       \   },
-      \   necovim: #{
-      \     mark: 'V',
+      \   vim: #{
+      \     mark: '[vim]',
       \   },
       \   cmdline: #{
-      \     mark: 'C',
+      \     mark: '[cmdline]',
       \     forceCompletionPattern: '\S/\S*|\.\w*',
       \   },
       \   input: #{
-      \     mark: 'I',
+      \     mark: '[input]',
       \     forceCompletionPattern: '\S/\S*',
       \     isVolatile: v:true,
       \   },
       \   file: #{
-      \     mark: 'F',
+      \     mark: '[file]',
       \     isVolatile: v:true,
       \     minAutoCompleteLength: 1000,
       \     forceCompletionPattern: '\S/\S*',
       \   },
       \   cmdline-history: #{
-      \     mark: 'CH',
+      \     mark: '[command-history]',
       \     sorters: [],
       \   },
       \   line: #{
-      \     mark: 'L',
+      \     mark: '[line]',
       \     matchers: ['matcher_vimregexp'],
+      \   },
+      \   codeium: #{
+      \     mark: '[codeium]',
+      \     matchers: ['matcher_length'],
+      \     minAutoCompleteLength: 0,
+      \     isVolatile: v:true,
+      \   },
+      \   lsp: #{
+      \     mark: '[lsp]',
+      \     forceCompletionPattern: '\.\w*|::\w*|->\w*',
+      \     dup: 'force',
       \   },
       \ },
       \ sourceParams: #{

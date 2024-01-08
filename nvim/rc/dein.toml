@@ -117,7 +117,7 @@ hook_add = '''
 [[plugins]]
 repo = 'thinca/vim-localrc'
 hook_add = '''
-  augroup MyAutoCmd BufEnter * nested call s:project_my_settings()
+  autocmd MyAutoCmd BufEnter * nested call s:project_my_settings()
 
   function! s:project_my_settings() abort
     let git_dir = finddir('.git', expand('%:p:h') . ';')

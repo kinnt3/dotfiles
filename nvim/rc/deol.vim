@@ -1,6 +1,9 @@
 " hook_add {{{
-nnoremap <expr> [Space]s
-      \ $'<Cmd>Deol {has('win32') ? 'cmd': ''} -no-start-insert<CR>'
+nnoremap [Space]s
+      \ <Cmd>call deol#start(#{
+      \   command: 'pwsh',
+      \   start_insert: v:false,
+      \ })<CR>
 nnoremap <Leader>D  <Cmd>call deol#kill_editor()<CR>
 nnoremap [ddu]t <Cmd>Ddu -name=deol -sync
       \ -ui-param-split=`has('nvim') ? 'floating' : 'horizontal'`

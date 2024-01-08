@@ -1,5 +1,11 @@
 " hook_add {{{
 
+" markdown
+let g:vim_markdown_frontmatter = v:true
+let g:vim_markdown_toml_frontmatter = v:true
+let g:vim_markdown_json_frontmatter = v:true
+let g:vim_markdown_no_default_key_mappings = v:true
+
 " Enable modeline for only Vim help files.
 autocmd MyAutoCmd BufRead,BufWritePost *.txt,*.jax setlocal modeline
 
@@ -20,9 +26,9 @@ let g:loaded_getscriptPlugin   = v:true
 let g:loaded_gzip              = v:true
 let g:loaded_gtags             = v:true
 let g:loaded_gtags_cscope      = v:true
-let g:loaded_man               = v:true
-let g:loaded_matchit           = v:true
-let g:loaded_matchparen        = v:true
+" let g:loaded_man               = v:true
+" let g:loaded_matchit           = v:true
+" let g:loaded_matchparen        = v:true
 let g:loaded_netrwFileHandlers = v:true
 let g:loaded_netrwPlugin       = v:true
 let g:loaded_netrwSettings     = v:true
@@ -56,23 +62,12 @@ endif
 " }}}
 
 " python {{{
-"setlocal foldmethod=indent
 setlocal softtabstop=4
 setlocal shiftwidth=4
 setlocal textwidth=80
 setlocal smarttab
 setlocal expandtab
 setlocal nosmartindent
-" }}}
-
-" html {{{
-setlocal includeexpr=v:fname->substitute('^\\/','','')
-setlocal path+=./;/
-" }}}
-
-" go {{{
-highlight default link goErr WarningMsg
-match goErr /\<err\>/
 " }}}
 
 " vim {{{
@@ -86,33 +81,6 @@ setlocal iskeyword+=:
 setlocal iskeyword+=#
 setlocal iskeyword+=-
 setlocal conceallevel=0
-
-function! s:set_highlight(group) abort
-  for group in ['helpBar', 'helpBacktick', 'helpStar', 'helpIgnore']
-    execute 'highlight link' group a:group
-  endfor
-endfunction
-call s:set_highlight('Special')
-
-function! s:right_align(linenr) abort
-  let m = a:linenr->getline()->matchlist(
-        \ '^\(\S\+\%(\s\S\+\)\?\)\?\s\+\(\*.\+\*\)')
-  if m->empty()
-    return
-  endif
-  call setline(a:linenr, m[1] .. ' '->repeat(
-        \ &l:textwidth - len(m[1]) - len(m[2])) .. m[2])
-endfunction
-function! s:right_aligns(start, end) abort
-  for linenr in range(a:start, a:end)
-    call s:right_align(linenr)
-  endfor
-endfunction
-command! -range -buffer RightAlign
-      \ call s:right_aligns('<line1>'->expand(), '<line2>'->expand())
-
-nnoremap <buffer> mm      <Cmd>RightAlign<CR>
-xnoremap <silent><buffer> mm      :RightAlign<CR>
 " }}}
 
 " toml {{{
